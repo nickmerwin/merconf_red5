@@ -1,0 +1,8 @@
+===========================
+MerConf Lite v.1 - Red5 App
+===========================
+
+* To setup in Eclipse:
+ - add red5.jar (comes with the Red5 installation - (/Applications/Red5/red5.jar)) as an External JAR to the build path
+ - add "WEB-INF/src" as a source folder on build path
+ - add "merconf_lite_red5/WEB-INF/classes" as the default build path
