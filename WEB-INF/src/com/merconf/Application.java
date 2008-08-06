@@ -22,7 +22,7 @@ public class Application extends ApplicationAdapter {
 
 	private static final Log log = LogFactory.getLog(Application.class);
 
-    @Override
+	// called when a client connects
 	public boolean appConnect(IConnection conn, Object[] params) {
     	
     	// get stream name from passed in connection parameter
@@ -32,7 +32,8 @@ public class Application extends ApplicationAdapter {
     	conn.setAttribute("streamName", streamName);
     	
     	// grab array of stream from our scope-wide shared object
-    	ArrayList<String> streams = (ArrayList<String>) getSO().getAttribute("streams");
+    	ISharedObject so = getSO();
+    	ArrayList<String> streams = (ArrayList<String>) so.getAttribute("streams");
         if(streams == null) streams = new ArrayList<String>();
         
         // add our new streamName to the array
@@ -40,15 +41,16 @@ public class Application extends ApplicationAdapter {
         streams.add(streamName);
         
         // store to shared object, this will send a SyncEvent.SYNC event to each connected client
-        getSO().setAttribute("streams", streams);
+        so.setAttribute("streams", streams);
         
         log.info(streams);
        	
 		return true;
 	}
-
+	
+	// called when a client's stream drops
     public void streamBroadcastClose(IBroadcastStream stream) {
-    	
+  
     	// get our client-specific connection object 
     	IConnection current = Red5.getConnectionLocal();
     	
@@ -56,11 +58,12 @@ public class Application extends ApplicationAdapter {
     	String streamName = (String) current.getAttribute("streamName");
     	
     	// remove the stream from the streams array
-    	ArrayList<String> streams = (ArrayList<String>) getSO().getAttribute("streams");
+    	ISharedObject so = getSO();
+    	ArrayList<String> streams = (ArrayList<String>) so.getAttribute("streams");
 		streams.remove(streamName);
 		
 		// update the shared object and notify the connected clients
-		getSO().setAttribute("streams", streams);
+		so.setAttribute("streams", streams);
 	}
     
     //////////////////// Shared Object helper //////////////
